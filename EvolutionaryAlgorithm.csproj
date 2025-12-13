@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EvolutionaryAlgorithm</RootNamespace>
     <AssemblyName>EvolutionaryAlgorithm</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -42,10 +42,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Chromosome.cs" />
-    <Compile Include="IProblem.cs" />
+    <Compile Include="Application\IResult.cs" />
+    <Compile Include="Application\Program.cs" />
+    <Compile Include="Application\Result.cs" />
+    <Compile Include="Domain\DataIn.cs" />
+    <Compile Include="Domain\IFitnessEvaluator.cs" />
+    <Compile Include="Excluded\Chromosome.cs" />
+    <Compile Include="Domain\Individual.cs" />
+    <Compile Include="Infrastructure\FastFoodFitnessEvaluator.cs" />
+    <Compile Include="Excluded\IProblem.cs" />
+    <Compile Include="NSGAII\AritmeticCrossover.cs" />
+    <Compile Include="NSGAII\Interfaces\IAritmeticCrossover.cs" />
+    <Compile Include="NSGAII\Interfaces\IUniformMutation.cs" />
+    <Compile Include="NSGAII\Interfaces\INonDominatedSorterer.cs" />
+    <Compile Include="NSGAII\Interfaces\ITournamentSelection.cs" />
+    <Compile Include="NSGAII\UniformMutation.cs" />
+    <Compile Include="NSGAII\NonDominatedSorter.cs" />
+    <Compile Include="NSGAII\NSGAIIRunner.cs" />
+    <Compile Include="NSGAII\TournamentSelection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rezolvare.cs" />
+    <Compile Include="Excluded\Rezolvare.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
