@@ -45,12 +45,13 @@
     <Compile Include="Application\IResult.cs" />
     <Compile Include="Application\Program.cs" />
     <Compile Include="Application\Result.cs" />
-    <Compile Include="Domain\DataIn.cs" />
-    <Compile Include="Domain\IFitnessEvaluator.cs" />
+    <Compile Include="NSGAII\DominanceComparer.cs" />
+    <Compile Include="Domain\OptimizationProblem.cs" />
     <Compile Include="Excluded\Chromosome.cs" />
     <Compile Include="Domain\Individual.cs" />
     <Compile Include="Infrastructure\FastFoodFitnessEvaluator.cs" />
     <Compile Include="Excluded\IProblem.cs" />
+    <Compile Include="Infrastructure\IFitnessEvaluator.cs" />
     <Compile Include="NSGAII\AritmeticCrossover.cs" />
     <Compile Include="NSGAII\Interfaces\IAritmeticCrossover.cs" />
     <Compile Include="NSGAII\Interfaces\IUniformMutation.cs" />
