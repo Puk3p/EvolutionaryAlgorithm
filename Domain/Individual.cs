@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace EvolutionaryAlgorithm.Domain
 {
     //clasa entitate
-    class Individual
+    public class Individual
     {
         //proprietati preluate din codul din laborator
         public int NoGenes { get; set; }
