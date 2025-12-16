@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EvolutionaryAlgorithm</RootNamespace>
     <AssemblyName>EvolutionaryAlgorithm</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -54,6 +54,7 @@
     <Compile Include="Infrastructure\IFitnessEvaluator.cs" />
     <Compile Include="NSGAII\AritmeticCrossover.cs" />
     <Compile Include="NSGAII\Interfaces\IAritmeticCrossover.cs" />
+    <Compile Include="NSGAII\Interfaces\ISelectionOperator.cs" />
     <Compile Include="NSGAII\Interfaces\IUniformMutation.cs" />
     <Compile Include="NSGAII\Interfaces\INonDominatedSorterer.cs" />
     <Compile Include="NSGAII\Interfaces\ITournamentSelection.cs" />
