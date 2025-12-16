@@ -43,10 +43,10 @@ namespace EvolutionaryAlgorithm.NSGAII
 
                     int result = _comparer.Dominates(p, q);
 
-                    if(result==1) //p domina q
+                    if (result == 1) //p domina q
                     {
                         p.DominatedSet.Add(q);
-                    }else if ( result == -1) //q domina p
+                    } else if (result == -1) //q domina p
                     {
                         p.DominationCount++;
                     }
@@ -64,18 +64,18 @@ namespace EvolutionaryAlgorithm.NSGAII
 
             //gasim fronturile urmatoare
             int i = 0; //indexul fontului curent ( 0 pt F1)
-            while( fronts[i].Any())
+            while (fronts[i].Any())
             {
                 List<Individual> Q = new List<Individual>(); //Q va fi urmatorul front
-                foreach( var p in fronts[i])
+                foreach(var p in fronts[i])
                 {
-                    foreach( var q in p.DominatedSet)
+                    foreach(var q in p.DominatedSet)
                     {
                         //decrementam DominationCount al lui q
                         q.DominationCount--;
 
                         //daca q nu mai e dominat de nimeni => se adauga in frontul curent
-                        if ( q.DominationCount == 0)
+                        if (q.DominationCount == 0)
                         {
                             q.Rank = i + 2;
                             Q.Add(q);
@@ -96,9 +96,9 @@ namespace EvolutionaryAlgorithm.NSGAII
 
         public void CrowdingDistanceAssignment(List<Individual> front)
         {
-            if(front.Count <= 2)
+            if (front.Count <= 2)
             {
-                foreach( var individual in front)
+                foreach(var individual in front)
                 {
                     individual.CrowdingDistance = double.PositiveInfinity;
                    
@@ -106,7 +106,7 @@ namespace EvolutionaryAlgorithm.NSGAII
                 return;
             }
 
-            foreach( var individual in front)
+            foreach (var individual in front)
             {
                 individual.CrowdingDistance = 0;
 
@@ -123,9 +123,9 @@ namespace EvolutionaryAlgorithm.NSGAII
             double costMax = sortedByCost.Last().Costs;
             double costRange = costMax - costMin;
 
-            if( costRange > 0)
+            if (costRange > 0)
             {
-                for(int i= 1; i < sortedByCost.Count-1; i++)
+                for (int i= 1; i < sortedByCost.Count-1; i++)
                 {
                     sortedByCost[i].CrowdingDistance +=
                         (sortedByCost[i + 1].Costs - sortedByCost[i - 1].Costs) / costRange;
@@ -147,7 +147,7 @@ namespace EvolutionaryAlgorithm.NSGAII
 
             if (timeRange > 0)
             {
-                for ( int i = 1; i< sortedByTime.Count-1; i++)
+                for (int i = 1; i< sortedByTime.Count - 1; i++)
                 {
                     sortedByTime[i].CrowdingDistance +=
                         (sortedByTime[i + 1].WaitingTime - sortedByTime[i - 1].WaitingTime) / timeRange;

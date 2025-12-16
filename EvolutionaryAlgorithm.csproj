@@ -54,10 +54,9 @@
     <Compile Include="Infrastructure\IFitnessEvaluator.cs" />
     <Compile Include="NSGAII\AritmeticCrossover.cs" />
     <Compile Include="NSGAII\Interfaces\IAritmeticCrossover.cs" />
-    <Compile Include="NSGAII\Interfaces\ISelectionOperator.cs" />
+    <Compile Include="NSGAII\Interfaces\ITournamentSelection.cs" />
     <Compile Include="NSGAII\Interfaces\IUniformMutation.cs" />
     <Compile Include="NSGAII\Interfaces\INonDominatedSorterer.cs" />
-    <Compile Include="NSGAII\Interfaces\ITournamentSelection.cs" />
     <Compile Include="NSGAII\UniformMutation.cs" />
     <Compile Include="NSGAII\NonDominatedSorter.cs" />
     <Compile Include="NSGAII\NSGAIIRunner.cs" />

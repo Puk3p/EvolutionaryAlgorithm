@@ -1,12 +1,14 @@
-﻿using System;
+﻿using EvolutionaryAlgorithm.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EvolutionaryAlgorithm.NSGAII
+namespace EvolutionaryAlgorithm.NSGAII.Interfaces
 {
-    interface ITournamentSelection
+    internal interface ITournamentSelection
     {
+        List<Individual> Select(List<Individual> population, int count);
     }
 }
