@@ -10,8 +10,8 @@ namespace EvolutionaryAlgorithm.Domain
     public class Individual
     {
         //proprietati preluate din codul din laborator
-        public int NoGenes { get; set; }
-        public double[] Genes { get; set; }
+        public int NoGenes { get; set; } //numarul de gene
+        public double[] Genes { get; set; } //vectorul de gene --> planul de angajati
         public double[] MinValues { get; set; }
         public double[] MaxValues { get; set; }
 
@@ -71,6 +71,10 @@ namespace EvolutionaryAlgorithm.Domain
             }
 
 
+        }
+        public static Individual Clone(Individual source)
+        {
+            return new Individual(source);
         }
 
 
