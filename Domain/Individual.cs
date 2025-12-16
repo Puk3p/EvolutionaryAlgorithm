@@ -44,7 +44,6 @@ namespace EvolutionaryAlgorithm.Domain
                 double randomValue = minValues[i] + _rand.NextDouble() * (maxValues[i] - minValues[i]);
                 Genes[i] = Math.Round(randomValue);
             }
-
         }
 
         public Individual (Individual c)
@@ -69,9 +68,8 @@ namespace EvolutionaryAlgorithm.Domain
                 MinValues[i] = c.MinValues[i];
                 MaxValues[i] = c.MaxValues[i];
             }
-
-
         }
+
         public static Individual Clone(Individual source)
         {
             return new Individual(source);

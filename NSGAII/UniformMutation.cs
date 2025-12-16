@@ -27,7 +27,7 @@ namespace EvolutionaryAlgorithm.NSGAII
                 {
                     //folosim proprietatile din OptimizationProblem
                     int min = (int)_problem.MinEmployeesPerHour;
-                    int max=(int)_problem.MaxEmployeesPerHour;
+                    int max= (int)_problem.MaxEmployeesPerHour;
                     //se genereaza un nr aleatoriu intre min si max si am pus +1 deoarece vrem sa exludem valoarea maxima
                     int newEmployeeCount = _rnd.Next(min, max + 1);
                     //inlocuim gena veche cu cea noua

@@ -29,8 +29,8 @@ namespace EvolutionaryAlgorithm.Domain
                 MinValues[i] = MinEmployeesPerHour;
                 MaxValues[i] = MaxEmployeesPerHour;
             }
-
         }
+
         public double[] MinValues { get; private set; }
         public double[] MaxValues { get; private set; }
 
