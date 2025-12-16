@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithm.Domain
 {
-    class OptimizationProblem
+    public class OptimizationProblem
     {
         public int PopulationSize { get; set; } = 100;
         public int MaxGeneration { get; set; } = 200;
