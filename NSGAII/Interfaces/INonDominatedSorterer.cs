@@ -9,7 +9,7 @@ using EvolutionaryAlgorithm.Domain;
 
 namespace EvolutionaryAlgorithm.NSGAII
 {
-    interface INonDominatedSorterer
+    public interface INonDominatedSorterer
     {
         //sortarea populatiei in Fronturi Pareto (F1, F2...)
         List<List<Individual>> FastNonDominatedSort(List<Individual> population);

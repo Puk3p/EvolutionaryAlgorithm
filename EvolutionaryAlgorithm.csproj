@@ -47,14 +47,12 @@
     <Compile Include="Application\Result.cs" />
     <Compile Include="NSGAII\DominanceComparer.cs" />
     <Compile Include="Domain\OptimizationProblem.cs" />
-    <Compile Include="Excluded\Chromosome.cs" />
     <Compile Include="Domain\Individual.cs" />
     <Compile Include="Infrastructure\FastFoodFitnessEvaluator.cs" />
-    <Compile Include="Excluded\IProblem.cs" />
     <Compile Include="Infrastructure\IFitnessEvaluator.cs" />
     <Compile Include="NSGAII\AritmeticCrossover.cs" />
     <Compile Include="NSGAII\Interfaces\IAritmeticCrossover.cs" />
-    <Compile Include="NSGAII\Interfaces\ITournamentSelection.cs" />
+    <Compile Include="NSGAII\Interfaces\ISelectionOperator.cs" />
     <Compile Include="NSGAII\Interfaces\IUniformMutation.cs" />
     <Compile Include="NSGAII\Interfaces\INonDominatedSorterer.cs" />
     <Compile Include="NSGAII\UniformMutation.cs" />
@@ -62,7 +60,6 @@
     <Compile Include="NSGAII\NSGAIIRunner.cs" />
     <Compile Include="NSGAII\TournamentSelection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Excluded\Rezolvare.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithm.NSGAII.Interfaces
 {
-    internal interface ITournamentSelection
+    public interface ISelectionOperator
     {
         List<Individual> Select(List<Individual> population, int count);
     }

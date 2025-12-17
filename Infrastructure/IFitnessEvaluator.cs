@@ -1,14 +1,9 @@
 ﻿using EvolutionaryAlgorithm.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithm.Infrastructure
 {
-    interface IFitnessEvaluator
+    public interface IFitnessEvaluator
     {
-        void Evaluate(Individual individual, OptimizationProblem problem);
+        void Evaluate(Individual individual);
     }
 }
