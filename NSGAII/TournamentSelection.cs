@@ -8,56 +8,48 @@ using EvolutionaryAlgorithm.NSGAII.Interfaces;
 
 namespace EvolutionaryAlgorithm.NSGAII
 {
-    public class TournamentSelection : ISelectionOperator
+    public class TournamentSelection : ITournamentSelection
     {
-        private readonly Random _rnd;
-        private readonly int _tournamentSize;
+        private readonly Random _random;
 
-        public TournamentSelection(Random rnd,int tournamentSize = 2)
+        public TournamentSelection(Random? random = null)
         {
-            _rnd = rnd;
-            _tournamentSize = tournamentSize;
+            _random = random ?? new Random();
         }
-        
-        public List<Individual> Select(List<Individual> population, int count)
-        {
-            List<Individual> selectedParents = new List<Individual>();
-            for(int k = 0; k < count; k++)
-            {
-                selectedParents.Add(RunTournament(population));
-            }
-            return selectedParents;
-        }
-        private Individual RunTournament(List<Individual> population)
-        {
-            Individual bestInd = null;
-            for (int i = 0; i < _tournamentSize; i++)
-            {
-                int randomIndex = _rnd.Next(population.Count);
-                Individual currentCandidate = population[randomIndex];
 
-                if (currentCandidate == null)
+        public Individual RunTournament(List<Individual> populatie, int marimeTurneu)
+        {
+            if (populatie == null || populatie.Count == 0)
+                throw new ArgumentException("Populatia nu poate fi nula sau goala.");
+
+            if (marimeTurneu <= 0) marimeTurneu = 1;
+
+            Individual celMaiTop = null;
+
+            for (int i = 0; i < marimeTurneu; ++i)
+            {
+                var candidat = populatie[_random.Next(0, populatie.Count)];
+
+                if (candidat == null) continue;
+
+                if (celMaiTop == null || EsteMaiBun(candidat, celMaiTop))
                 {
-                    bestInd = currentCandidate;
-                    continue;
-                }
-                if (CrowdedComparison(currentCandidate, bestInd))
-                {
-                    bestInd = currentCandidate;
+                    celMaiTop = candidat;
                 }
             }
-            return bestInd;
+
+            return celMaiTop ?? populatie[0];
         }
-        private bool CrowdedComparison(Individual i1, Individual i2)
+
+        public bool EsteMaiBun(Individual i1, Individual i2)
         {
-            if (i1.Rank != i2.Rank)
-            {
-                return i1.Rank < i2.Rank;
-            }
-            else
-            {
-                return i1.CrowdingDistance > i2.CrowdingDistance;
-            }
+            if (i2 == null) return true;
+            if (i1 == null) return false;
+
+            if (i1.Rank < i2.Rank) return true;
+            if (i1.Rank > i2.Rank) return false;
+
+            return i1.CrowdingDistance > i2.CrowdingDistance;
         }
     }
 }

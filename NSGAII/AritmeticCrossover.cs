@@ -40,7 +40,7 @@ namespace EvolutionaryAlgorithm.NSGAII
 
             for (int i = 0; i < GenesLength; i++)
             {
-                double value1 = alpha * parent1.Genes[i] + (1 - alpha) * parent2.Genes[i]; ;
+                double value1 = alpha * parent1.Genes[i] + (1 - alpha) * parent2.Genes[i];
                 double value2 = alpha * parent2.Genes[i] + (1 - alpha) * parent1.Genes[i];
 
                 int min = (int)_problem.MinEmployeesPerHour;
@@ -60,9 +60,6 @@ namespace EvolutionaryAlgorithm.NSGAII
                 result2 = Math.Min(result2, max);
                 result2 = Math.Max(result2, min); 
                 child2.Genes[i] = result2;
-
-
-
             }
 
             children.Add(child1);

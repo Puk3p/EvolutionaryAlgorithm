@@ -15,49 +15,28 @@ namespace EvolutionaryAlgorithm.NSGAII
     class DominanceComparer
     {
         //in cazul nostru, ambele functii obiectiv sunt de minimizare
-
-        public int Dominates(Individual i1, Individual i2)
+        public int Compare(Individual i1, Individual i2)
         {
-            //presupunem initial ca ambii domina
-            bool i1_dominates = true;
-            bool i2_dominates = true;
+            if (i1 == null && i2 == null) return 0;
+            if (i1 == null) return 1;
+            if (i2 == null) return -1;
 
-            if (i1.Costs > i2.Costs || i1.WaitingTime > i2.WaitingTime)
-            {
-                i1_dominates = false;
+            bool i1NuEsteMaiRau =
+                i1.Costs <= i2.Costs && i1.WaitingTime <= i2.WaitingTime;
 
-            }
-            if (i2.Costs > i1.Costs || i2.WaitingTime > i2.WaitingTime)
-            {
-                i2_dominates = false;
-            }
+            bool i2NuEsteMaiRau =
+                i2.Costs <= i1.Costs && i2.WaitingTime <= i1.WaitingTime;
 
-            bool i1_strictlyBetter = false;
-            bool i2_strictlyBetter = false;
+            bool i1EsteStrictMaiBun =
+                i1.Costs < i2.Costs || i1.WaitingTime < i2.WaitingTime;
 
-            if (i1.Costs < i2.Costs || i1.WaitingTime < i2.WaitingTime)
-            {
-                i1_strictlyBetter = true;
-            }
+            bool i2EsteStrictMaiBun =
+                i2.Costs < i1.Costs || i2.WaitingTime < i1.WaitingTime;
 
-            if (i2.Costs < i1.Costs || i2.WaitingTime < i2.WaitingTime)
-            {
-                i2_strictlyBetter = true;
-            }
+            if (isNuEsteMaiRau && i1EsteStrictMaiBun) return -1; //i1 domina i2
+            if (i2NuEsteMaiRau && i2EsteStrictMaiBun) return 1;  //i2 domina i1
 
-            if (i1_dominates && i1_strictlyBetter)
-            {
-                return 1; //i1 domina i1
-            }
-
-            if (i2_dominates && i2_strictlyBetter)
-            {
-                return -1; //i1 domina i2
-            }
-            return 0; //non-dominated
-
-
+            return 0;
         }
-
     }
 }
