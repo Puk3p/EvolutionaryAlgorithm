@@ -1,55 +1,55 @@
 ﻿using EvolutionaryAlgorithm.Domain;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EvolutionaryAlgorithm.NSGAII.Interfaces;
 
 namespace EvolutionaryAlgorithm.NSGAII
 {
     public class TournamentSelection : ITournamentSelection
     {
-        private readonly Random _random;
+        private readonly Random _rnd;
+        private readonly int _tournamentSize;
 
-        public TournamentSelection(Random? random = null)
+        public TournamentSelection(Random rnd, int tournamentSize = 2)
         {
-            _random = random ?? new Random();
+            _rnd = rnd ?? new Random();
+            _tournamentSize = tournamentSize <= 0 ? 2 : tournamentSize;
         }
 
-        public Individual RunTournament(List<Individual> populatie, int marimeTurneu)
+        public List<Individual> Select(List<Individual> population, int count)
         {
-            if (populatie == null || populatie.Count == 0)
-                throw new ArgumentException("Populatia nu poate fi nula sau goala.");
+            if (population == null || population.Count == 0)
+                throw new ArgumentException("Population is null or empty.");
 
-            if (marimeTurneu <= 0) marimeTurneu = 1;
+            if (count <= 0) count = 1;
 
-            Individual celMaiTop = null;
+            var selected = new List<Individual>(count);
+            for (int k = 0; k < count; k++)
+                selected.Add(RunTournament(population));
 
-            for (int i = 0; i < marimeTurneu; ++i)
+            return selected;
+        }
+
+        private Individual RunTournament(List<Individual> population)
+        {
+            Individual best = null;
+
+            for (int i = 0; i < _tournamentSize; i++)
             {
-                var candidat = populatie[_random.Next(0, populatie.Count)];
+                var candidate = population[_rnd.Next(population.Count)];
+                if (candidate == null) continue;
 
-                if (candidat == null) continue;
-
-                if (celMaiTop == null || EsteMaiBun(candidat, celMaiTop))
-                {
-                    celMaiTop = candidat;
-                }
+                if (best == null || EsteMaiBun(candidate, best))
+                    best = candidate;
             }
 
-            return celMaiTop ?? populatie[0];
+            return best ?? population[0];
         }
 
-        public bool EsteMaiBun(Individual i1, Individual i2)
+        private bool EsteMaiBun(Individual a, Individual b)
         {
-            if (i2 == null) return true;
-            if (i1 == null) return false;
-
-            if (i1.Rank < i2.Rank) return true;
-            if (i1.Rank > i2.Rank) return false;
-
-            return i1.CrowdingDistance > i2.CrowdingDistance;
+            if (a.Rank != b.Rank) return a.Rank < b.Rank;
+            return a.CrowdingDistance > b.CrowdingDistance;
         }
     }
 }

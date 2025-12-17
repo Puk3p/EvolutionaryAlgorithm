@@ -3,19 +3,16 @@ using EvolutionaryAlgorithm.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithm.NSGAII
 {
-    //coordonator de gestionare Parento
     class NSGAIIRunner
     {
         private readonly OptimizationProblem _problem;
         private readonly IFitnessEvaluator _evaluator;
 
-        private readonly NonDominatedSorter _sorter;
         private readonly DominanceComparer _dominanceComparer;
+        private readonly NonDominatedSorter _sorter;
 
         private readonly TournamentSelection _tournamentSelection;
         private readonly AritmeticCrossover _crossover;
@@ -23,129 +20,115 @@ namespace EvolutionaryAlgorithm.NSGAII
 
         private readonly Random _random;
 
-        public NSGAIIRunner(
-            OptimizationProblem problem,
-            IFitnessEvaluator evaluator,
-
-            Random? random = null)
+        public NSGAIIRunner(OptimizationProblem problem, IFitnessEvaluator evaluator, Random random = null)
         {
-            _problem = problem ?? throw new ArgumentNullException(nameof(problem));
-            _evaluator = evaluator ?? throw new ArgumentNullException(nameof(evaluator));
+            if (problem == null) throw new ArgumentNullException("problem");
+            if (evaluator == null) throw new ArgumentNullException("evaluator");
+
+            _problem = problem;
+            _evaluator = evaluator;
 
             _random = random ?? new Random();
 
             _dominanceComparer = new DominanceComparer();
-            _sorter = new NonDominatedSorter();
-            _tournamentSelection = new TournamentSelection(_random);
-            _crossover = new AritmeticCrossover(_random);
-            _mutation = new UniformMutation(_random);
+            _sorter = new NonDominatedSorter(_dominanceComparer);
+
+            _tournamentSelection = new TournamentSelection(_random, 2);
+            _crossover = new AritmeticCrossover(_problem, _random);
+            _mutation = new UniformMutation(_problem, _random);
         }
 
         public List<Individual> Run()
         {
-
-            //initailziare
             var population = InitializePopulation(_problem.PopulationSize);
 
-            //evaloare rank+crowding
             EvaluatePopulation(population);
             AssignRankAndCrowding(population);
 
-            //generatii
-            for (int gen = 0; gen < _problem.MaxGeneration; ++gen)
+            for (int gen = 0; gen < _problem.MaxGeneration; gen++)
             {
-                var copilasi = CreeazaCopilasi(population, _problem.PopulationSize);
+                var copii = CreeazaCopii(population, _problem.PopulationSize);
+                EvaluatePopulation(copii);
 
-                EvaluatePopulation(copilasi);
+                var combined = population.Concat(copii).ToList();
+                var fronts = _sorter.FastNonDominatedSort(combined);
 
-                var combinatii = population.Concat(copilasi).ToList();
-                var fronturi = _sorter.FastNonDominatedSort(combinatii, _dominanceComparer);
-
-                var urmPopulatie = new List<Individual>(_problem.PopulationSize);
+                var nextPop = new List<Individual>(_problem.PopulationSize);
 
                 int frontIndex = 0;
-
-                while (frontIndex < fronturi.Count && urmPopulatie.Count + fronturi[frontIndex].Count
-                    <= _problem.PopulationSize)
+                while (frontIndex < fronts.Count &&
+                       nextPop.Count + fronts[frontIndex].Count <= _problem.PopulationSize)
                 {
-                    var front = fronturi[frontIndex];
+                    var front = fronts[frontIndex];
                     _sorter.CrowdingDistanceAssignment(front);
-                    ++frontIndex;
+
+                    nextPop.AddRange(front);
+                    frontIndex++;
                 }
 
-                if (urmPopulatie.Count < _problem.PopulationSize && frontIndex < fronturi.Count)
+                if (nextPop.Count < _problem.PopulationSize && frontIndex < fronts.Count)
                 {
-                    var ultimulFront = fronturi[frontIndex];
-                    _sorter.CrowdingDistanceAssignment(ultimulFront);
+                    var lastFront = fronts[frontIndex];
+                    _sorter.CrowdingDistanceAssignment(lastFront);
 
-                    int ramase = _problem.PopulationSize - urmPopulatie.Count;
+                    int remaining = _problem.PopulationSize - nextPop.Count;
 
-                    urmPopulatie.AddRange(
-                        ultimulFront
-                        .OrderByDescending(ind => ind.CrowdingDistance)
-                        .Take(ramase)
-                        );
+                    nextPop.AddRange(
+                        lastFront
+                            .OrderByDescending(ind => ind.CrowdingDistance)
+                            .Take(remaining)
+                    );
                 }
-                population = urmPopulatie;
 
+                population = nextPop;
                 AssignRankAndCrowding(population);
             }
 
-            var frontFinal = _sorter.FastNonDominatedSort(population, _dominanceComparer);
-
-            return frontFinal.Count > 0 ? frontFinal[0] : new List<Individual>();
+            var finalFronts = _sorter.FastNonDominatedSort(population);
+            return finalFronts.Count > 0 ? finalFronts[0] : new List<Individual>();
         }
 
-        private List<Individual> InitializePopulation(int marimeaPopulatiei)
+        private List<Individual> InitializePopulation(int size)
         {
-            var populatie = new List<Individual>(marimeaPopulatiei);
-            for (int i = 0; i < marimeaPopulatiei; ++i)
-            {
-                populatie.Add(_problem.MakeIndividual());
-            }
-
-            return populatie;
+            var pop = new List<Individual>(size);
+            for (int i = 0; i < size; i++)
+                pop.Add(_problem.MakeIndividual());
+            return pop;
         }
 
-        private List<Individual> EvaluatePopulation(List<Individual> population)
+        private void EvaluatePopulation(List<Individual> population)
         {
-            foreach(var individ in population)
-            {
-                _evaluator.Evaluate(individ, _problem);
-            }
+            foreach (var ind in population)
+                _evaluator.Evaluate(ind, _problem);
         }
 
         private void AssignRankAndCrowding(List<Individual> population)
         {
-            var fronturi = _sorter.FastNonDominatedSort(population, _dominanceComparer);
-            foreach (var front in fronturi)
-            {
+            var fronts = _sorter.FastNonDominatedSort(population);
+            foreach (var front in fronts)
                 _sorter.CrowdingDistanceAssignment(front);
-            }
         }
 
-        private List<Individual> CreeazaCopilasi(List<Individual> population, int targetSize)
+        private List<Individual> CreeazaCopii(List<Individual> population, int targetSize)
         {
             var children = new List<Individual>(targetSize);
 
-            int tournamentSize = 2;
-
             while (children.Count < targetSize)
             {
-                var p1 = _tournamentSelection.RunTournament(population, tournamentSize);
-                var p2 = _tournamentSelection.RunTournament(population, tournamentSize);
+                var parents = _tournamentSelection.Select(population, 2);
+                var p1 = parents[0];
+                var p2 = parents[1];
 
-                var (c1, c2) = _crossover.Crossover(p1, p2);
+                var kids = _crossover.Crossover(p1, p2);
+                var c1 = kids[0];
+                var c2 = kids[1];
 
                 _mutation.Mutate(c1);
                 _mutation.Mutate(c2);
 
                 children.Add(c1);
-
                 if (children.Count < targetSize)
-                {
                     children.Add(c2);
-                }
             }
 
             return children;
