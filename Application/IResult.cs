@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace EvolutionaryAlgorithm.Application
 {
-    interface IResult
+    public interface IResult
     {
+        void Display();
     }
 }

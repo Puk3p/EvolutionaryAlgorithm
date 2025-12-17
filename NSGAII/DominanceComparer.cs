@@ -3,7 +3,7 @@
 namespace EvolutionaryAlgorithm.NSGAII
 {
     // minimizare pe ambele Costs si WaitingTime
-    class DominanceComparer
+    public class DominanceComparer
     {
         public int Dominates(Individual p, Individual q)
         {

@@ -1,137 +1,97 @@
-﻿using EvolutionaryAlgorithm.Domain;
-using EvolutionaryAlgorithm.Infrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using EvolutionaryAlgorithm.Domain;
+using EvolutionaryAlgorithm.Infrastructure;
+using EvolutionaryAlgorithm.NSGAII.Interfaces;
 
 namespace EvolutionaryAlgorithm.NSGAII
 {
-    class NSGAIIRunner
+    public class NSGAIIRunner
     {
         private readonly OptimizationProblem _problem;
-        private readonly IFitnessEvaluator _evaluator;
-
-        private readonly DominanceComparer _dominanceComparer;
-        private readonly NonDominatedSorter _sorter;
-
-        private readonly TournamentSelection _tournamentSelection;
-        private readonly AritmeticCrossover _crossover;
-        private readonly UniformMutation _mutation;
-
         private readonly Random _random;
 
-        public NSGAIIRunner(OptimizationProblem problem, IFitnessEvaluator evaluator, Random random = null)
+        private readonly ISelectionOperator _selection;
+        private readonly IAritmeticCrossover _crossover;
+        private readonly IUniformMutation _mutation;
+        private readonly INonDominatedSorterer _sorter;
+        private readonly IFitnessEvaluator _evaluator;
+
+        public NSGAIIRunner(OptimizationProblem problem, Random random,
+                            ISelectionOperator selection, IAritmeticCrossover crossover,
+                            IUniformMutation mutation, INonDominatedSorterer sorter,
+                            IFitnessEvaluator evaluator)
         {
-            if (problem == null) throw new ArgumentNullException("problem");
-            if (evaluator == null) throw new ArgumentNullException("evaluator");
-
             _problem = problem;
+            _random = random;
+            _selection = selection;
+            _crossover = crossover;
+            _mutation = mutation;
+            _sorter = sorter;
             _evaluator = evaluator;
-
-            _random = random ?? new Random();
-
-            _dominanceComparer = new DominanceComparer();
-            _sorter = new NonDominatedSorter(_dominanceComparer);
-
-            _tournamentSelection = new TournamentSelection(_random, 2);
-            _crossover = new AritmeticCrossover(_problem, _random);
-            _mutation = new UniformMutation(_problem, _random);
         }
 
         public List<Individual> Run()
         {
-            var population = InitializePopulation(_problem.PopulationSize);
-
-            EvaluatePopulation(population);
-            AssignRankAndCrowding(population);
+            //initializam populatia
+            List<Individual> population = new List<Individual>();
+            for (int i = 0; i < _problem.PopulationSize; i++)
+            {
+                var ind = _problem.MakeIndividual();
+                _evaluator.Evaluate(ind);
+                population.Add(ind);
+            }
 
             for (int gen = 0; gen < _problem.MaxGeneration; gen++)
             {
-                var copii = CreeazaCopii(population, _problem.PopulationSize);
-                EvaluatePopulation(copii);
+                //facem copii
+                List<Individual> offspring = new List<Individual>();
 
-                var combined = population.Concat(copii).ToList();
-                var fronts = _sorter.FastNonDominatedSort(combined);
+                while (offspring.Count < _problem.PopulationSize)
+                { //aplicam functiile specifice algoritmului evolutiv
+                    var parents = _selection.Select(population, 2);
 
-                var nextPop = new List<Individual>(_problem.PopulationSize);
+                    var children = _crossover.Crossover(parents[0], parents[1]);
 
-                int frontIndex = 0;
-                while (frontIndex < fronts.Count &&
-                       nextPop.Count + fronts[frontIndex].Count <= _problem.PopulationSize)
+                    foreach (var child in children)
+                    {
+                        _mutation.Mutate(child);
+                        _evaluator.Evaluate(child);
+                        offspring.Add(child);
+                    }
+                }
+
+                //populatie = parinti + copii
+                var combinedPopulation = new List<Individual>(population);
+                combinedPopulation.AddRange(offspring);
+
+                //fronturile pareto
+                var fronts = _sorter.FastNonDominatedSort(combinedPopulation);
+
+                //construirea populatiei rezultat
+                population.Clear();
+                foreach (var front in fronts)
                 {
-                    var front = fronts[frontIndex];
                     _sorter.CrowdingDistanceAssignment(front);
 
-                    nextPop.AddRange(front);
-                    frontIndex++;
+                    if (population.Count + front.Count <= _problem.PopulationSize)
+                    {
+                        population.AddRange(front);
+                    }
+                    else
+                    {
+                        // Daca nu incape frontul, facem o sortare dupa Crowding Distance  si ii luam pe cei mai buni
+                        var sortedFront = front.OrderByDescending(x => x.CrowdingDistance).ToList();
+                        int spotsLeft = _problem.PopulationSize - population.Count;
+                        population.AddRange(sortedFront.Take(spotsLeft));
+                        break;
+                    }
                 }
-
-                if (nextPop.Count < _problem.PopulationSize && frontIndex < fronts.Count)
-                {
-                    var lastFront = fronts[frontIndex];
-                    _sorter.CrowdingDistanceAssignment(lastFront);
-
-                    int remaining = _problem.PopulationSize - nextPop.Count;
-
-                    nextPop.AddRange(
-                        lastFront
-                            .OrderByDescending(ind => ind.CrowdingDistance)
-                            .Take(remaining)
-                    );
-                }
-
-                population = nextPop;
-                AssignRankAndCrowding(population);
             }
 
-            var finalFronts = _sorter.FastNonDominatedSort(population);
-            return finalFronts.Count > 0 ? finalFronts[0] : new List<Individual>();
-        }
-
-        private List<Individual> InitializePopulation(int size)
-        {
-            var pop = new List<Individual>(size);
-            for (int i = 0; i < size; i++)
-                pop.Add(_problem.MakeIndividual());
-            return pop;
-        }
-
-        private void EvaluatePopulation(List<Individual> population)
-        {
-            foreach (var ind in population)
-                _evaluator.Evaluate(ind, _problem);
-        }
-
-        private void AssignRankAndCrowding(List<Individual> population)
-        {
-            var fronts = _sorter.FastNonDominatedSort(population);
-            foreach (var front in fronts)
-                _sorter.CrowdingDistanceAssignment(front);
-        }
-
-        private List<Individual> CreeazaCopii(List<Individual> population, int targetSize)
-        {
-            var children = new List<Individual>(targetSize);
-
-            while (children.Count < targetSize)
-            {
-                var parents = _tournamentSelection.Select(population, 2);
-                var p1 = parents[0];
-                var p2 = parents[1];
-
-                var kids = _crossover.Crossover(p1, p2);
-                var c1 = kids[0];
-                var c2 = kids[1];
-
-                _mutation.Mutate(c1);
-                _mutation.Mutate(c2);
-
-                children.Add(c1);
-                if (children.Count < targetSize)
-                    children.Add(c2);
-            }
-
-            return children;
+            // Returnăm primul front in care se afla cele mai bune solutii
+            return _sorter.FastNonDominatedSort(population)[0];
         }
     }
 }

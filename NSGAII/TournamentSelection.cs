@@ -5,7 +5,7 @@ using EvolutionaryAlgorithm.NSGAII.Interfaces;
 
 namespace EvolutionaryAlgorithm.NSGAII
 {
-    public class TournamentSelection : ITournamentSelection
+    public class TournamentSelection : ISelectionOperator
     {
         private readonly Random _rnd;
         private readonly int _tournamentSize;

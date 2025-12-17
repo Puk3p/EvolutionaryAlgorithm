@@ -37,7 +37,7 @@ namespace EvolutionaryAlgorithm.NSGAII
                 p.DominationCount = 0;
                 p.DominatedSet.Clear();
 
-                foreach ( var q in population)
+                foreach (var q in population)
                 {
                     if (p == q) continue; //individul nu e comparat cu el insusi
 
