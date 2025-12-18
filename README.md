@@ -62,8 +62,8 @@ Structura codului este organizată modular pentru claritate și extensibilitate:
 
 În urma rulării simulărilor, algoritmul nu oferă o soluție unică, ci un **Front Pareto**:
 
-1.  **Extrema Economică:** Costuri minime (~870 RON), dar cu timpi de așteptare foarte mari (Penalizare > 1500).
-2.  **Extrema Calitativă:** Timp de așteptare zero (Penalizare 0.00), dar cu costuri duble (~1875 RON).
+1.  **Din punct de vedere economic:** Costuri minime (~870 RON), dar cu timpi de așteptare foarte mari (Penalizare > 1500).
+2.  **Din punct de vedere a timpului:** Timp de așteptare zero (Penalizare 0.00), dar cu costuri duble (~1875 RON).
 3.  **Compromisul:** Soluțiile intermediare unde algoritmul a "învățat" tiparul cererii de clienți, alocând personal suplimentar doar la orele de vârf.
 
 > **Concluzie:** Algoritmul NSGA-II demonstrează că nu există o organizare perfectă absolută, ci o serie de decizii manageriale bazate pe bugetul disponibil vs. standardul de calitate dorit.
